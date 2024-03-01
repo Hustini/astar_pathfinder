@@ -127,7 +127,12 @@ def main():
         draw(WIN, grid, ROWS, WIDTH)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                print('Mouse button pressed!')
+                pos = pygame.mouse.get_pos()
+                row, col = get_clicked_pos(pos, ROWS, WIDTH)
+                print(row, col)
 
 
 if __name__ == '__main__':
