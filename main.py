@@ -1,5 +1,4 @@
 import pygame
-import math
 from queue import PriorityQueue
 
 WIDTH = 800
@@ -28,6 +27,9 @@ class Node:
         self.neighbour = []
         self.width = width
         self.total_rows = total_rows
+        self.g = 0
+        self.h = 0
+        self.f = 0
 
     def get_pos(self):
         return self.row, self.col
@@ -78,12 +80,6 @@ class Node:
         return False
 
 
-def h_cost(p1, p2):
-    x1, y1 = p1
-    x2, y2 = p2
-    return abs(x1 - x2) + abs(y1 - y2)
-
-
 def make_grid(rows, width):
     grid = []
     gap = width // rows
@@ -101,6 +97,42 @@ def draw_grid(win, rows, width):
         pygame.draw.line(win, GREY, (0, i * gap), (width, i * gap))
         for j in range(rows):
             pygame.draw.line(win, GREY, (j * gap, 0), (j * gap, width))
+
+
+def h_cost(p1, p2):
+    x1, y1 = p1
+    x2, y2 = p2
+    return abs(x1 - x2) + abs(y1 - y2)
+
+
+def algorithm(grid, start, end):
+    open_list = PriorityQueue()
+    closed_list = PriorityQueue()
+    open_list.put((0, start))
+
+    while not open_list.empty():
+        pass
+
+    """while len(open_list) != 0:
+        current_node = open_list[0]
+        current_index = 0
+        current_node = open_list[0]
+        current_index = 0
+
+        for index, item in enumerate(open_list):
+            if item.f < current_node.f:
+                current_node = item
+                current_index = index
+        open_list.pop(current_index)
+        closed_list.append(current_node)
+
+        if current_node == end:
+            path = []
+            current = current_node
+            while current is not None:
+                path.append(current.position)
+                current = current.parent
+            return path[::-1]"""
 
 
 def draw(win, grid, rows, width):
@@ -138,14 +170,19 @@ def main():
                 node = grid[col][row]
                 if not start and node != end:
                     start = node
-                    print(start.x, start.y)
+                    start.g = start.h = start.f = 0
+                    print(col, row)
                     start.make_start()
                 elif not end and node != start:
                     end = node
-                    print(end.x, end.y)
+                    end.g = end.h = end.f = 0
+                    print(col, row)
                     end.make_end()
                 elif node != end and node != start:
                     node.make_barrier()
+            if event.type == pygame.KEYDOWN:
+                print('space bar pressed')
+                algorithm(grid, start, end)
 
         draw(WIN, grid, ROWS, WIDTH)
 
