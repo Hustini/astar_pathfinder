@@ -78,12 +78,6 @@ class Node:
         return False
 
 
-def h_cost(p1, p2):
-    x1, y1 = p1
-    x2, y2 = p2
-    return abs(x1 - x2) + abs(y1 - y2)
-
-
 def make_grid(rows, width):
     grid = []
     gap = width // rows
@@ -121,6 +115,16 @@ def get_clicked_pos(pos, rows, width):
     return row, col
 
 
+def h_cost(p1, p2):
+    x1, y1 = p1
+    x2, y2 = p2
+    return abs(x1 - x2) + abs(y1 - y2)
+
+
+def algorithm(draw, grid, start, end):
+    pass
+
+
 def main():
     ROWS = 25
     grid = make_grid(ROWS, WIDTH)
@@ -132,7 +136,8 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+
+            if pygame.mouse.get_pressed()[0]:
                 pos = pygame.mouse.get_pos()
                 row, col = get_clicked_pos(pos, ROWS, WIDTH)
                 print(row, col)
@@ -141,6 +146,19 @@ def main():
                     start = node
                     print(start)
                     start.make_start()
+                elif not end and node != start:
+                    end = node
+                    print(end)
+                    end.make_end()
+                elif node != end and node != start:
+                    node.make_barrier()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    for row in grid:
+                        for node in row:
+                            pass
+                    algorithm(lambda : draw(WIN, grid, ROWS, WIDTH), grid, start, end)
 
         draw(WIN, grid, ROWS, WIDTH)
 
