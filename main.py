@@ -22,7 +22,7 @@ class Node:
     def __init__(self, row, col, width, total_rows):
         self.row = row
         self.col = col
-        self.x = row * width
+        self.x = col * width
         self.y = row * width
         self.color = WHITE
         self.neighbour = []
@@ -48,7 +48,7 @@ class Node:
         return self.color == PURPLE
 
     def reset(self):
-        return self.color == WHITE
+        self.color = WHITE
 
     def make_closed(self):
         self.color = RED
@@ -58,6 +58,9 @@ class Node:
 
     def make_barrier(self):
         self.color = BLACK
+
+    def make_start(self):
+        self.color = ORANGE
 
     def make_end(self):
         self.color = TURQUOISE
@@ -121,18 +124,25 @@ def get_clicked_pos(pos, rows, width):
 def main():
     ROWS = 25
     grid = make_grid(ROWS, WIDTH)
+    start = None
+    end = None
 
     running = True
     while running:
-        draw(WIN, grid, ROWS, WIDTH)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                print('Mouse button pressed!')
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 row, col = get_clicked_pos(pos, ROWS, WIDTH)
                 print(row, col)
+                node = grid[col][row]
+                if not start and node != end:
+                    start = node
+                    print(start)
+                    start.make_start()
+
+        draw(WIN, grid, ROWS, WIDTH)
 
 
 if __name__ == '__main__':
