@@ -132,15 +132,20 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            if pygame.mouse.get_pressed()[0]:
                 pos = pygame.mouse.get_pos()
                 row, col = get_clicked_pos(pos, ROWS, WIDTH)
-                print(row, col)
                 node = grid[col][row]
                 if not start and node != end:
                     start = node
-                    print(start)
+                    print(start.x, start.y)
                     start.make_start()
+                elif not end and node != start:
+                    end = node
+                    print(end.x, end.y)
+                    end.make_end()
+                elif node != end and node != start:
+                    node.make_barrier()
 
         draw(WIN, grid, ROWS, WIDTH)
 
