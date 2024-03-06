@@ -133,15 +133,49 @@ def h_cost(p1, p2):
 
 
 def algorithm(draw, grid, start, end):
+    count = 0
     open_list = PriorityQueue()
     closed_list = PriorityQueue()
+    g_score = {spot: float("inf") for row in grid for spot in row}
+    g_score[start] = 0
+    f_score = {spot: float("inf") for row in grid for spot in row}
+    f_score[start] = h_cost(start.get_pos(), end.get_pos())
+    came_from = {}
 
-    open_list.put((0, start))
+    open_list.put((0, count, start))
+    open_list_hash = {start}
 
     while not open_list.empty():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+
+        current = open_list.get()[2]
+        open_list_hash.remove(current)
+
+        if current == end:
+            print('found')
+
+        for neighbour in current.neighbour:
+            print(current.neighbour)
+            temp_g = g_score[current] + 1
+            if temp_g < g_score[neighbour]:
+                print('gut')
+                came_from[neighbour] = current
+                g_score[neighbour] = temp_g
+                f_score[neighbour] = temp_g + h_cost(neighbour.get_pos(), end.get_pos())
+                if neighbour not in open_list_hash:
+                    count += 1
+                    open_list.put((f_score[neighbour], count, neighbour))
+                    open_list_hash.add(neighbour)
+                    neighbour.make_open()
+
+        draw()
+
+        if current != start:
+            current.make_closed()
+
+    return False
 
 
 def main():
