@@ -1,6 +1,8 @@
+import sys
+
 import pygame
-import math
 from queue import PriorityQueue
+import time
 
 WIDTH = 800
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
@@ -132,10 +134,18 @@ def h_cost(p1, p2):
     return abs(x1 - x2) + abs(y1 - y2)
 
 
+def reconstruct_path(current, came_from):
+    path = []
+    while current in came_from:
+        path.append(current)
+        current = came_from[current]
+    path.append(current)
+    return path
+
+
 def algorithm(draw, grid, start, end):
     count = 0
     open_list = PriorityQueue()
-    closed_list = PriorityQueue()
     g_score = {spot: float("inf") for row in grid for spot in row}
     g_score[start] = 0
     f_score = {spot: float("inf") for row in grid for spot in row}
@@ -154,7 +164,14 @@ def algorithm(draw, grid, start, end):
         open_list_hash.remove(current)
 
         if current == end:
-            print('found')
+            path = reconstruct_path(current, came_from)
+            for node in path:
+                node.make_path()
+            end.make_end()
+            start.make_start()
+            draw()
+            print(f'Path: {path}')
+            break
 
         for neighbour in current.neighbour:
             print(current.neighbour)
