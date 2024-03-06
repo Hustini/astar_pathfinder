@@ -28,6 +28,9 @@ class Node:
         self.neighbour = []
         self.width = width
         self.total_rows = total_rows
+        self.f = 0
+        self.g = 0
+        self.h = 0
 
     def get_pos(self):
         return self.row, self.col
@@ -72,7 +75,15 @@ class Node:
         pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
 
     def update_neighbour(self, grid):
-        pass
+        self.neighbour.clear()
+        if self.row > 0 and not grid[self.row - 1][self.col].is_barrier():  # UP
+            self.neighbour.append(grid[self.row - 1][self.col])
+        if self.row < self.total_rows - 1 and not grid[self.row + 1][self.col].is_barrier():  # DOWN
+            self.neighbour.append(grid[self.row + 1][self.col])
+        if self.row > 0 and not grid[self.row][self.col - 1].is_barrier():  # LEFT
+            self.neighbour.append(grid[self.row][self.col - 1])
+        if self.row < self.total_rows - 1 and not grid[self.row][self.col + 1].is_barrier():  # RIGHT
+            self.neighbour.append(grid[self.row][self.col + 1])
 
     def __lt__(self, other):
         return False
@@ -122,7 +133,15 @@ def h_cost(p1, p2):
 
 
 def algorithm(draw, grid, start, end):
-    pass
+    open_list = PriorityQueue()
+    closed_list = PriorityQueue()
+
+    open_list.put((0, start))
+
+    while not open_list.empty():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
 
 
 def main():
@@ -157,8 +176,8 @@ def main():
                 if event.key == pygame.K_SPACE:
                     for row in grid:
                         for node in row:
-                            pass
-                    algorithm(lambda : draw(WIN, grid, ROWS, WIDTH), grid, start, end)
+                            pass  # update_neighbour
+                    algorithm(lambda: draw(WIN, grid, ROWS, WIDTH), grid, start, end)
 
         draw(WIN, grid, ROWS, WIDTH)
 
